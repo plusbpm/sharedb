@@ -10,11 +10,11 @@ describe('client submit', function() {
 
   it('can fetch an uncreated doc', function(done) {
     var doc = this.backend.connect().get('dogs', 'fido');
-    expect(doc.data).equal(undefined);
+    expect(doc.getData()).equal(undefined);
     expect(doc.version).equal(null);
     doc.fetch(function(err) {
       if (err) return done(err);
-      expect(doc.data).equal(undefined);
+      expect(doc.getData()).equal(undefined);
       expect(doc.version).equal(0);
       done();
     });
@@ -26,7 +26,7 @@ describe('client submit', function() {
       if (err) return done(err);
       doc.create({age: 3}, function(err) {
         if (err) return done(err);
-        expect(doc.data).eql({age: 3});
+        expect(doc.getData()).eql({age: 3});
         expect(doc.version).eql(1);
         done();
       });
@@ -37,7 +37,7 @@ describe('client submit', function() {
     var doc = this.backend.connect().get('dogs', 'fido');
     doc.create({age: 3}, function(err) {
       if (err) return done(err);
-      expect(doc.data).eql({age: 3});
+      expect(doc.getData()).eql({age: 3});
       expect(doc.version).eql(1);
       done();
     });
@@ -47,17 +47,17 @@ describe('client submit', function() {
     var doc = this.backend.connect().get('dogs', 'fido');
     doc.create({age: 3}, function(err) {
       if (err) return done(err);
-      expect(doc.data).eql({age: 3});
+      expect(doc.getData()).eql({age: 3});
       expect(doc.version).eql(1);
 
       doc.del(null, function(err) {
         if (err) return done(err);
-        expect(doc.data).eql(undefined);
+        expect(doc.getData()).eql(undefined);
         expect(doc.version).eql(2);
 
         doc.create({age: 2}, function(err) {
           if (err) return done(err);
-          expect(doc.data).eql({age: 2});
+          expect(doc.getData()).eql({age: 2});
           expect(doc.version).eql(3);
           done();
         });
@@ -71,7 +71,7 @@ describe('client submit', function() {
       if (err) return done(err);
       doc.submitOp({p: ['age'], na: 2}, function(err) {
         if (err) return done(err);
-        expect(doc.data).eql({age: 5});
+        expect(doc.getData()).eql({age: 5});
         expect(doc.version).eql(2);
         done();
       });
@@ -81,10 +81,10 @@ describe('client submit', function() {
   it('can create then submit an op sync', function(done) {
     var doc = this.backend.connect().get('dogs', 'fido');
     doc.create({age: 3});
-    expect(doc.data).eql({age: 3});
+    expect(doc.getData()).eql({age: 3});
     expect(doc.version).eql(null);
     doc.submitOp({p: ['age'], na: 2});
-    expect(doc.data).eql({age: 5});
+    expect(doc.getData()).eql({age: 5});
     expect(doc.version).eql(null);
     doc.whenNothingPending(done);
   });
@@ -123,19 +123,19 @@ describe('client submit', function() {
     doc.submitOp({p: ['age'], na: 2});
     doc.submitOp({p: ['age'], na: 2}, function(err) {
       if (err) return done(err);
-      expect(doc.data).eql({age: 7});
+      expect(doc.getData()).eql({age: 7});
       // Version is 1 instead of 3, because the create and ops got composed
       expect(doc.version).eql(1);
       doc.submitOp({p: ['age'], na: 2});
       doc.submitOp({p: ['age'], na: 2}, function(err) {
         if (err) return done(err);
-        expect(doc.data).eql({age: 11});
+        expect(doc.getData()).eql({age: 11});
         // Ops get composed
         expect(doc.version).eql(2);
         doc.submitOp({p: ['age'], na: 2});
         doc.del(function(err) {
           if (err) return done(err);
-          expect(doc.data).eql(undefined);
+          expect(doc.getData()).eql(undefined);
           // del DOES NOT get composed
           expect(doc.version).eql(4);
           done();
@@ -151,13 +151,13 @@ describe('client submit', function() {
     doc.submitOp({p: ['age'], na: 2});
     doc.submitOp({p: ['age'], na: 2}, function(err) {
       if (err) return done(err);
-      expect(doc.data).eql({age: 7});
+      expect(doc.getData()).eql({age: 7});
       // Compare to version in above test
       expect(doc.version).eql(3);
       doc.submitOp({p: ['age'], na: 2});
       doc.submitOp({p: ['age'], na: 2}, function(err) {
         if (err) return done(err);
-        expect(doc.data).eql({age: 11});
+        expect(doc.getData()).eql({age: 11});
         // Compare to version in above test
         expect(doc.version).eql(5);
         done();
@@ -172,7 +172,7 @@ describe('client submit', function() {
     doc.submitOp({p: ['age'], na: 2});
     doc.submitOp({p: ['age'], na: 2}, function(err) {
       if (err) return done(err);
-      expect(doc.data).eql({age: 7});
+      expect(doc.getData()).eql({age: 7});
       // Compare to version in above test
       expect(doc.version).eql(3);
       // Reset back to start composing ops again
@@ -180,7 +180,7 @@ describe('client submit', function() {
       doc.submitOp({p: ['age'], na: 2});
       doc.submitOp({p: ['age'], na: 2}, function(err) {
         if (err) return done(err);
-        expect(doc.data).eql({age: 11});
+        expect(doc.getData()).eql({age: 11});
         // Compare to version in above test
         expect(doc.version).eql(4);
         done();
@@ -194,7 +194,7 @@ describe('client submit', function() {
       if (err) return done(err);
       doc.fetch(function(err) {
         if (err) return done(err);
-        expect(doc.data).eql({age: 3});
+        expect(doc.getData()).eql({age: 3});
         expect(doc.version).eql(1);
         done();
       });
@@ -208,7 +208,7 @@ describe('client submit', function() {
       doc.create({age: 4}, function(err) {
         expect(err).ok();
         expect(doc.version).equal(1);
-        expect(doc.data).eql({age: 3});
+        expect(doc.getData()).eql({age: 3});
         done();
       });
     });
@@ -222,7 +222,7 @@ describe('client submit', function() {
       doc2.create({age: 4}, function(err) {
         expect(err).ok();
         expect(doc2.version).equal(1);
-        expect(doc2.data).eql({age: 3});
+        expect(doc2.getData()).eql({age: 3});
         done();
       });
     });
@@ -240,7 +240,7 @@ describe('client submit', function() {
           doc2.submitOp({p: ['age'], na: 2}, function(err) {
             if (err) return done(err);
             expect(doc2.version).equal(3);
-            expect(doc2.data).eql({age: 6});
+            expect(doc2.getData()).eql({age: 6});
             done();
           });
         });
@@ -312,7 +312,7 @@ describe('client submit', function() {
     doc.create({age: 3}, function(err) {
       if (err) return done(err);
       expect(doc.version).equal(1);
-      expect(doc.data).eql({age: 3});
+      expect(doc.getData()).eql({age: 3});
       done();
     });
     delayedReconnect(backend, doc.connection);
@@ -330,7 +330,7 @@ describe('client submit', function() {
         doc2.create({age: 3}, function(err) {
           if (err) return done(err);
           expect(doc2.version).equal(3);
-          expect(doc2.data).eql({age: 3});
+          expect(doc2.getData()).eql({age: 3});
           done();
         });
         delayedReconnect(backend, doc2.connection);
@@ -346,7 +346,7 @@ describe('client submit', function() {
       doc.del(function(err) {
         if (err) return done(err);
         expect(doc.version).equal(2);
-        expect(doc.data).eql(undefined);
+        expect(doc.getData()).eql(undefined);
         done();
       });
       delayedReconnect(backend, doc.connection);
@@ -361,7 +361,7 @@ describe('client submit', function() {
       doc.submitOp({p: ['age'], na: 2}, function(err) {
         if (err) return done(err);
         expect(doc.version).equal(2);
-        expect(doc.data).eql({age: 5});
+        expect(doc.getData()).eql({age: 5});
         done();
       });
     });
@@ -374,11 +374,11 @@ describe('client submit', function() {
       if (err) return done(err);
       doc2.fetch(function(err) {
         if (err) return done(err);
-        expect(doc.data).eql({age: 3});
-        expect(doc2.data).eql({age: 3});
+        expect(doc.getData()).eql({age: 3});
+        expect(doc2.getData()).eql({age: 3});
         expect(doc.version).eql(1);
         expect(doc2.version).eql(1);
-        expect(doc.data).not.equal(doc2.data);
+        expect(doc.getData()).not.equal(doc2.getData());
         done();
       });
     });
@@ -396,10 +396,10 @@ describe('client submit', function() {
           count++;
           if (err) return done(err);
           if (count === 1) {
-            expect(doc.data).eql({age: 5});
+            expect(doc.getData()).eql({age: 5});
             expect(doc.version).eql(2);
           } else {
-            expect(doc.data).eql({age: 12});
+            expect(doc.getData()).eql({age: 12});
             expect(doc.version).eql(3);
             done();
           }
@@ -408,10 +408,10 @@ describe('client submit', function() {
           count++;
           if (err) return done(err);
           if (count === 1) {
-            expect(doc2.data).eql({age: 10});
+            expect(doc2.getData()).eql({age: 10});
             expect(doc2.version).eql(2);
           } else {
-            expect(doc2.data).eql({age: 12});
+            expect(doc2.getData()).eql({age: 12});
             expect(doc2.version).eql(3);
             done();
           }
@@ -429,11 +429,11 @@ describe('client submit', function() {
       if (count === 1) {
         if (err) return done(err);
         expect(doc.version).eql(1);
-        expect(doc.data).eql({age: 3});
+        expect(doc.getData()).eql({age: 3});
       } else {
         expect(err).ok();
         expect(doc.version).eql(1);
-        expect(doc.data).eql({age: 5});
+        expect(doc.getData()).eql({age: 5});
         done();
       }
     });
@@ -442,11 +442,11 @@ describe('client submit', function() {
       if (count === 1) {
         if (err) return done(err);
         expect(doc2.version).eql(1);
-        expect(doc2.data).eql({age: 5});
+        expect(doc2.getData()).eql({age: 5});
       } else {
         expect(err).ok();
         expect(doc2.version).eql(1);
-        expect(doc2.data).eql({age: 3});
+        expect(doc2.getData()).eql({age: 3});
         done();
       }
     });
@@ -465,10 +465,10 @@ describe('client submit', function() {
           if (err) return done(err);
           if (count === 1) {
             expect(doc.version).eql(2);
-            expect(doc.data).eql(undefined);
+            expect(doc.getData()).eql(undefined);
           } else {
             expect(doc.version).eql(3);
-            expect(doc.data).eql(undefined);
+            expect(doc.getData()).eql(undefined);
             done();
           }
         });
@@ -477,10 +477,10 @@ describe('client submit', function() {
           if (err) return done(err);
           if (count === 1) {
             expect(doc2.version).eql(2);
-            expect(doc2.data).eql(undefined);
+            expect(doc2.getData()).eql(undefined);
           } else {
             expect(doc2.version).eql(3);
-            expect(doc2.data).eql(undefined);
+            expect(doc2.getData()).eql(undefined);
             done();
           }
         });
@@ -547,7 +547,7 @@ describe('client submit', function() {
           ], function(err) {
             if (err) return done(err);
             expect(doc.version).equal(4);
-            expect(doc.data).eql({age: 5});
+            expect(doc.getData()).eql({age: 5});
             done();
           });
         });
@@ -570,7 +570,7 @@ describe('client submit', function() {
           ], function(err) {
             if (err) return done(err);
             expect(doc.version).equal(4);
-            expect(doc.data).eql({age: 5});
+            expect(doc.getData()).eql({age: 5});
             done();
           });
         });
@@ -590,7 +590,7 @@ describe('client submit', function() {
           doc.submitOp({p: ['age'], na: 1}, function(err) {
             expect(err).ok();
             expect(doc.version).equal(1);
-            expect(doc.data).eql({age: 3});
+            expect(doc.getData()).eql({age: 3});
             done();
           });
         });
@@ -611,7 +611,7 @@ describe('client submit', function() {
           doc.submitOp({p: ['age'], na: 1}, function(err) {
             expect(err).ok();
             expect(doc.version).equal(2);
-            expect(doc.data).eql(undefined);
+            expect(doc.getData()).eql(undefined);
             done();
           });
           doc.fetch();
@@ -635,7 +635,7 @@ describe('client submit', function() {
             doc.create({age: 9}, function(err) {
               expect(err).ok();
               expect(doc.version).equal(3);
-              expect(doc.data).eql({age: 5});
+              expect(doc.getData()).eql({age: 5});
               done();
             });
             doc.fetch();
@@ -655,7 +655,7 @@ describe('client submit', function() {
         doc2.create({age: 5}, function(err) {
           if (err) return done(err);
           expect(doc2.version).eql(3);
-          expect(doc2.data).eql({age: 5});
+          expect(doc2.getData()).eql({age: 5});
           done();
         });
       });
@@ -705,11 +705,11 @@ describe('client submit', function() {
               function(cb) { doc2.fetch(cb); }
             ], function(err) {
               if (err) return done(err);
-              expect(doc.data).eql({age: 9, color: 'gold', sex: 'female'});
+              expect(doc.getData()).eql({age: 9, color: 'gold', sex: 'female'});
               expect(doc.version).equal(3);
               expect(doc.hasPending()).equal(true);
 
-              expect(doc2.data).eql({age: 8, sex: 'female'});
+              expect(doc2.getData()).eql({age: 8, sex: 'female'});
               expect(doc2.version).equal(3);
               expect(doc2.hasPending()).equal(false);
 
@@ -717,11 +717,11 @@ describe('client submit', function() {
               doc.whenNothingPending(function() {
                 doc2.fetch(function(err) {
                   if (err) return done(err);
-                  expect(doc.data).eql({age: 9, color: 'gold', sex: 'female'});
+                  expect(doc.getData()).eql({age: 9, color: 'gold', sex: 'female'});
                   expect(doc.version).equal(4);
                   expect(doc.hasPending()).equal(false);
 
-                  expect(doc2.data).eql({age: 9, color: 'gold', sex: 'female'});
+                  expect(doc2.getData()).eql({age: 9, color: 'gold', sex: 'female'});
                   expect(doc2.version).equal(4);
                   expect(doc2.hasPending()).equal(false);
                   done();
@@ -775,7 +775,7 @@ describe('client submit', function() {
         if (err) return done(err);
         doc2.submitOp({p: ['name', 0], si: 'f'}, function(err) {
           if (err) return done(err);
-          expect(doc2.data).eql({name: 'fkido'});
+          expect(doc2.getData()).eql({name: 'fkido'});
           doc.connection.createFetchQuery('dogs', {}, null, function(err) {
             if (err) return done(err);
             doc.resume();
@@ -791,7 +791,7 @@ describe('client submit', function() {
         doc2.fetch(function(err) {
           if (err) return done(err);
           expect(doc2.version).equal(3);
-          expect(doc2.data).eql({name: 'fido'});
+          expect(doc2.getData()).eql({name: 'fido'});
           done();
         });
       });
@@ -807,11 +807,11 @@ describe('client submit', function() {
     doc.create({age: 3}, function(err) {
       expect(err.message).equal('Custom error');
       expect(doc.version).equal(0);
-      expect(doc.data).equal(undefined);
+      expect(doc.getData()).equal(undefined);
       done();
     });
     expect(doc.version).equal(null);
-    expect(doc.data).eql({age: 3});
+    expect(doc.getData()).eql({age: 3});
   });
 
   it('passing an error in submit middleware rejects a create and throws the erorr', function(done) {
@@ -821,11 +821,11 @@ describe('client submit', function() {
     var doc = this.backend.connect().get('dogs', 'fido');
     doc.create({age: 3});
     expect(doc.version).equal(null);
-    expect(doc.data).eql({age: 3});
+    expect(doc.getData()).eql({age: 3});
     doc.on('error', function(err) {
       expect(err.message).equal('Custom error');
       expect(doc.version).equal(0);
-      expect(doc.data).equal(undefined);
+      expect(doc.getData()).equal(undefined);
       done();
     });
   });
@@ -843,23 +843,23 @@ describe('client submit', function() {
         doc.create({age: 3}, function(err) {
           expect(err.message).equal('Custom error');
           expect(doc.version).equal(0);
-          expect(doc.data).equal(undefined);
+          expect(doc.getData()).equal(undefined);
           cb();
         });
         expect(doc.version).equal(null);
-        expect(doc.data).eql({age: 3});
+        expect(doc.getData()).eql({age: 3});
       },
       function(cb) {
         process.nextTick(function() {
           doc.submitOp({p: ['age'], na: 1}, function(err) {
             expect(err.message).equal('Custom error');
             expect(doc.version).equal(0);
-            expect(doc.data).equal(undefined);
+            expect(doc.getData()).equal(undefined);
             expect(submitCount).equal(1);
             cb();
           });
           expect(doc.version).equal(null);
-          expect(doc.data).eql({age: 4});
+          expect(doc.getData()).eql({age: 4});
         });
       }
     ], done);
@@ -873,11 +873,11 @@ describe('client submit', function() {
     doc.create({age: 3}, function(err) {
       if (err) return done(err);
       expect(doc.version).equal(0);
-      expect(doc.data).equal(undefined);
+      expect(doc.getData()).equal(undefined);
       done();
     });
     expect(doc.version).equal(null);
-    expect(doc.data).eql({age: 3});
+    expect(doc.getData()).eql({age: 3});
   });
 
   it('request.rejectedError() soft rejects a create without callback', function(done) {
@@ -887,10 +887,10 @@ describe('client submit', function() {
     var doc = this.backend.connect().get('dogs', 'fido');
     doc.create({age: 3});
     expect(doc.version).equal(null);
-    expect(doc.data).eql({age: 3});
+    expect(doc.getData()).eql({age: 3});
     doc.whenNothingPending(function() {
       expect(doc.version).equal(0);
-      expect(doc.data).equal(undefined);
+      expect(doc.getData()).equal(undefined);
       done();
     });
   });
@@ -906,11 +906,11 @@ describe('client submit', function() {
       doc.submitOp({p: ['age'], na: 1}, function(err) {
         expect(err.message).equal('Custom error');
         expect(doc.version).equal(1);
-        expect(doc.data).eql({age: 3});
+        expect(doc.getData()).eql({age: 3});
         done();
       });
       expect(doc.version).equal(1);
-      expect(doc.data).eql({age: 4});
+      expect(doc.getData()).eql({age: 4});
     });
   });
 
@@ -924,11 +924,11 @@ describe('client submit', function() {
       if (err) return done(err);
       doc.submitOp({p: ['age'], na: 1});
       expect(doc.version).equal(1);
-      expect(doc.data).eql({age: 4});
+      expect(doc.getData()).eql({age: 4});
       doc.on('error', function(err) {
         expect(err.message).equal('Custom error');
         expect(doc.version).equal(1);
-        expect(doc.data).eql({age: 3});
+        expect(doc.getData()).eql({age: 3});
         done();
       });
     });
@@ -951,19 +951,19 @@ describe('client submit', function() {
             cb();
           });
           expect(doc.version).equal(1);
-          expect(doc.data).eql({age: 4});
+          expect(doc.getData()).eql({age: 4});
         },
         function(cb) {
           process.nextTick(function() {
             doc.submitOp({p: ['age'], na: 5}, cb);
             expect(doc.version).equal(1);
-            expect(doc.data).eql({age: 9});
+            expect(doc.getData()).eql({age: 9});
           });
         }
       ], function(err) {
         if (err) return done(err);
         expect(doc.version).equal(2);
-        expect(doc.data).eql({age: 8});
+        expect(doc.getData()).eql({age: 8});
         expect(submitCount).equal(3);
         done();
       });
@@ -981,11 +981,11 @@ describe('client submit', function() {
       doc.submitOp({p: ['age'], na: 1}, function(err) {
         if (err) return done(err);
         expect(doc.version).equal(1);
-        expect(doc.data).eql({age: 3});
+        expect(doc.getData()).eql({age: 3});
         done();
       });
       expect(doc.version).equal(1);
-      expect(doc.data).eql({age: 4});
+      expect(doc.getData()).eql({age: 4});
     });
   });
 
@@ -999,10 +999,10 @@ describe('client submit', function() {
       if (err) return done(err);
       doc.submitOp({p: ['age'], na: 1});
       expect(doc.version).equal(1);
-      expect(doc.data).eql({age: 4});
+      expect(doc.getData()).eql({age: 4});
       doc.whenNothingPending(function() {
         expect(doc.version).equal(1);
-        expect(doc.data).eql({age: 3});
+        expect(doc.getData()).eql({age: 3});
         done();
       });
     });
@@ -1020,16 +1020,16 @@ describe('client submit', function() {
       doc.submitOp({p: ['age'], na: 1}, function(err) {
         if (err) return done(err);
         expect(doc.version).equal(2);
-        expect(doc.data).eql({age: 4});
+        expect(doc.getData()).eql({age: 4});
         doc2.fetch(function(err) {
           if (err) return done(err);
           expect(doc2.version).equal(2);
-          expect(doc2.data).eql({age: 3});
+          expect(doc2.getData()).eql({age: 3});
           done();
         });
       });
       expect(doc.version).equal(1);
-      expect(doc.data).eql({age: 4});
+      expect(doc.getData()).eql({age: 4});
     });
   });
 
@@ -1049,8 +1049,8 @@ describe('client submit', function() {
       var doc = this.backend.connect().get('dogs', 'fido');
       doc.create([3], deserializedType.type.uri, function(err) {
         if (err) return done(err);
-        expect(doc.data).a(deserializedType.Node);
-        expect(doc.data).eql({value: 3, next: null});
+        expect(doc.getData()).a(deserializedType.Node);
+        expect(doc.getData()).eql({value: 3, next: null});
         done();
       });
     });
@@ -1076,8 +1076,8 @@ describe('client submit', function() {
         if (err) return done(err);
         doc2.fetch(function(err) {
           if (err) return done(err);
-          expect(doc2.data).a(deserializedType.Node);
-          expect(doc2.data).eql({value: 3, next: null});
+          expect(doc2.getData()).a(deserializedType.Node);
+          expect(doc2.getData()).eql({value: 3, next: null});
           done();
         });
       });
@@ -1089,7 +1089,7 @@ describe('client submit', function() {
         if (err) return done(err);
         doc.submitOp({insert: 0, value: 2}, function(err) {
           if (err) return done(err);
-          expect(doc.data).eql({value: 2, next: {value: 3, next: null}});
+          expect(doc.getData()).eql({value: 2, next: {value: 3, next: null}});
           done();
         });
       });
@@ -1107,7 +1107,7 @@ describe('client submit', function() {
             if (err) return done(err);
             doc2.submitOp({insert: 1, value: 4}, function(err) {
               if (err) return done(err);
-              expect(doc2.data).eql({value: 2, next: {value: 3, next: {value: 4, next: null}}});
+              expect(doc2.getData()).eql({value: 2, next: {value: 3, next: {value: 4, next: null}}});
               done();
             });
           });
@@ -1121,8 +1121,8 @@ describe('client submit', function() {
       var doc = this.backend.connect().get('dogs', 'fido');
       doc.create([3], deserializedType.type2.uri, function(err) {
         if (err) return done(err);
-        expect(doc.data).a(deserializedType.Node);
-        expect(doc.data).eql({value: 3, next: null});
+        expect(doc.getData()).a(deserializedType.Node);
+        expect(doc.getData()).eql({value: 3, next: null});
         done();
       });
     });
@@ -1131,8 +1131,8 @@ describe('client submit', function() {
       var doc = this.backend.connect().get('dogs', 'fido');
       doc.create(new deserializedType.Node(3), deserializedType.type2.uri, function(err) {
         if (err) return done(err);
-        expect(doc.data).a(deserializedType.Node);
-        expect(doc.data).eql({value: 3, next: null});
+        expect(doc.getData()).a(deserializedType.Node);
+        expect(doc.getData()).eql({value: 3, next: null});
         done();
       });
     });

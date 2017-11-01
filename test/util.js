@@ -10,7 +10,8 @@ exports.sortById = function(docs) {
 exports.pluck = function(docs, key) {
   var values = [];
   for (var i = 0; i < docs.length; i++) {
-    values.push(docs[i][key]);
+    var value = key === 'data' ? docs[i].getData() : docs[i][key];
+    values.push(value);
   }
   return values;
 };

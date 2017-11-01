@@ -59,8 +59,8 @@ describe('client query subscribe', function() {
           if (err) return callback(err);
           doc3.fetch(function(err) {
             if (err) return callback(err);
-            expect(doc.data).eql(doc2.data);
-            expect(doc.data).eql(doc3.data);
+            expect(doc.getData()).eql(doc2.getData());
+            expect(doc.getData()).eql(doc3.getData());
             callback();
           });
         });
@@ -75,21 +75,21 @@ describe('client query subscribe', function() {
         function(op, source) {
           expect(source).equal(true);
           expect(op).eql([{p: ['color'], oi: 'white'}]);
-          expect(doc.data).eql({color: 'white'});
+          expect(doc.getData()).eql({color: 'white'});
           doc.submitOp({p: ['color'], oi: 'gray'});
         }, function(op, source) {
           expect(source).equal(true);
           expect(op).eql([{p: ['color'], oi: 'gray'}]);
-          expect(doc.data).eql({color: 'gray'});
+          expect(doc.getData()).eql({color: 'gray'});
         }, function(op, source) {
           expect(source).equal(false);
           expect(op).eql([]);
-          expect(doc.data).eql({color: 'gray'});
+          expect(doc.getData()).eql({color: 'gray'});
           doc.submitOp({p: ['color'], oi: 'black'});
         }, function(op, source) {
           expect(source).equal(true);
           expect(op).eql([{p: ['color'], oi: 'black'}]);
-          expect(doc.data).eql({color: 'black'});
+          expect(doc.getData()).eql({color: 'black'});
         }
       ];
       doc.on('op', function(op, source) {
@@ -99,7 +99,7 @@ describe('client query subscribe', function() {
       doc2.submitOp([{p: ['color'], oi: 'brown'}], function(err) {
         if (err) return done(err);
         doc.submitOp({p: ['color'], oi: 'white'});
-        expect(doc.data).eql({color: 'gray'});
+        expect(doc.getData()).eql({color: 'gray'});
         verifyConsistency(doc, doc2, doc3, handlers, done);
       });
     });
@@ -112,33 +112,33 @@ describe('client query subscribe', function() {
         function(op, source) {
           expect(source).equal(true);
           expect(op).eql([{p: ['color'], oi: 'white'}]);
-          expect(doc.data).eql({color: 'white'});
+          expect(doc.getData()).eql({color: 'white'});
           doc.submitOp([{p: ['color'], oi: 'gray'}, {p: ['weight'], oi: 40}]);
-          expect(doc.data).eql({color: 'gray', weight: 40});
+          expect(doc.getData()).eql({color: 'gray', weight: 40});
         }, function(op, source) {
           expect(source).equal(true);
           expect(op).eql([{p: ['color'], oi: 'gray'}, {p: ['weight'], oi: 40}]);
-          expect(doc.data).eql({color: 'gray', weight: 40});
+          expect(doc.getData()).eql({color: 'gray', weight: 40});
         }, function(op, source) {
           expect(source).equal(false);
           expect(op).eql([{p: ['age'], oi: 2}]);
-          expect(doc.data).eql({color: 'gray', weight: 40, age: 2});
+          expect(doc.getData()).eql({color: 'gray', weight: 40, age: 2});
           doc.submitOp([{p: ['color'], oi: 'black'}, {p: ['age'], na: 1}]);
-          expect(doc.data).eql({color: 'black', weight: 40, age: 5});
+          expect(doc.getData()).eql({color: 'black', weight: 40, age: 5});
         }, function(op, source) {
           expect(source).equal(true);
           expect(op).eql([{p: ['color'], oi: 'black'}, {p: ['age'], na: 1}]);
-          expect(doc.data).eql({color: 'black', weight: 40, age: 3});
+          expect(doc.getData()).eql({color: 'black', weight: 40, age: 3});
           doc.submitOp({p: ['age'], na: 2});
-          expect(doc.data).eql({color: 'black', weight: 40, age: 5});
+          expect(doc.getData()).eql({color: 'black', weight: 40, age: 5});
         }, function(op, source) {
           expect(source).equal(true);
           expect(op).eql([{p: ['age'], na: 2}]);
-          expect(doc.data).eql({color: 'black', weight: 40, age: 5});
+          expect(doc.getData()).eql({color: 'black', weight: 40, age: 5});
         }, function(op, source) {
           expect(source).equal(false);
           expect(op).eql([{p: ['owner'], oi: 'sue'}]);
-          expect(doc.data).eql({color: 'black', weight: 40, age: 5, owner: 'sue'});
+          expect(doc.getData()).eql({color: 'black', weight: 40, age: 5, owner: 'sue'});
         }
       ];
       doc.on('op', function(op, source) {
@@ -148,7 +148,7 @@ describe('client query subscribe', function() {
       doc2.submitOp([{p: ['age'], oi: 2}, {p: ['owner'], oi: 'sue'}], function(err) {
         if (err) return done(err);
         doc.submitOp({p: ['color'], oi: 'white'});
-        expect(doc.data).eql({color: 'gray', weight: 40});
+        expect(doc.getData()).eql({color: 'gray', weight: 40});
         verifyConsistency(doc, doc2, doc3, handlers, done);
       });
     });
@@ -161,35 +161,35 @@ describe('client query subscribe', function() {
         function(op, source) {
           expect(source).equal(false);
           expect(op).eql([{p: ['tricks'], oi: ['fetching']}]);
-          expect(doc.data).eql({tricks: ['fetching']});
+          expect(doc.getData()).eql({tricks: ['fetching']});
         }, function(op, source) {
           expect(source).equal(false);
           expect(op).eql([{p: ['tricks', 0], li: 'stand'}]);
-          expect(doc.data).eql({tricks: ['stand', 'fetching']});
+          expect(doc.getData()).eql({tricks: ['stand', 'fetching']});
           doc.submitOp([{p: ['tricks', 0], ld: 'stand'}, {p: ['tricks', 0, 8], si: ' stick'}]);
-          expect(doc.data).eql({tricks: ['fetching stick']});
+          expect(doc.getData()).eql({tricks: ['fetching stick']});
         }, function(op, source) {
           expect(source).equal(true);
           expect(op).eql([{p: ['tricks', 0], ld: 'stand'}, {p: ['tricks', 0, 8], si: ' stick'}]);
-          expect(doc.data).eql({tricks: ['fetching stick']});
+          expect(doc.getData()).eql({tricks: ['fetching stick']});
         }, function(op, source) {
           expect(source).equal(false);
           expect(op).eql([{p: ['tricks', 0], li: 'shake'}]);
-          expect(doc.data).eql({tricks: ['shake', 'fetching stick']});
+          expect(doc.getData()).eql({tricks: ['shake', 'fetching stick']});
           doc.submitOp([{p: ['tricks', 1, 0], sd: 'fetch'}, {p: ['tricks', 1, 0], si: 'tug'}]);
-          expect(doc.data).eql({tricks: ['shake', 'tuging stick']});
+          expect(doc.getData()).eql({tricks: ['shake', 'tuging stick']});
         }, function(op, source) {
           expect(source).equal(true);
           expect(op).eql([{p: ['tricks', 1, 0], sd: 'fetch'}, {p: ['tricks', 1, 0], si: 'tug'}]);
-          expect(doc.data).eql({tricks: ['shake', 'tuging stick']});
+          expect(doc.getData()).eql({tricks: ['shake', 'tuging stick']});
         }, function(op, source) {
           expect(source).equal(false);
           expect(op).eql([{p: ['tricks', 1, 3], sd: 'ing'}]);
-          expect(doc.data).eql({tricks: ['shake', 'tug stick']});
+          expect(doc.getData()).eql({tricks: ['shake', 'tug stick']});
         }, function(op, source) {
           expect(source).equal(false);
           expect(op).eql([]);
-          expect(doc.data).eql({tricks: ['shake', 'tug stick']});
+          expect(doc.getData()).eql({tricks: ['shake', 'tug stick']});
         }
       ];
       doc.on('op', function(op, source) {

@@ -19,7 +19,7 @@ describe('client subscribe', function() {
         doc2[method](function(err) {
           if (err) return done(err);
           expect(doc2.version).eql(1);
-          expect(doc2.data).eql({age: 3});
+          expect(doc2.getData()).eql({age: 3});
           done();
         });
       });
@@ -36,7 +36,7 @@ describe('client subscribe', function() {
         ], function(err) {
           if (err) return done(err);
           expect(doc2.version).eql(1);
-          expect(doc2.data).eql({age: 3});
+          expect(doc2.getData()).eql({age: 3});
           done();
         });
       });
@@ -54,7 +54,7 @@ describe('client subscribe', function() {
         ], function(err) {
           if (err) return done(err);
           expect(doc2.version).eql(1);
-          expect(doc2.data).eql({age: 3});
+          expect(doc2.getData()).eql({age: 3});
           done();
         });
         doc2.connection.endBulk();
@@ -80,9 +80,9 @@ describe('client subscribe', function() {
           function(cb) { finn[method](cb); }
         ], function(err) {
           if (err) return done(err);
-          expect(fido.data).eql({age: 3});
-          expect(spot.data).eql({age: 5});
-          expect(finn.data).eql({age: 2});
+          expect(fido.getData()).eql({age: 3});
+          expect(spot.getData()).eql({age: 5});
+          expect(finn.getData()).eql({age: 2});
           done();
         });
         connection2.endBulk();
@@ -105,9 +105,9 @@ describe('client subscribe', function() {
         expect(fido.version).equal(0);
         expect(spot.version).equal(0);
         expect(finn.version).equal(0);
-        expect(fido.data).equal(undefined);
-        expect(spot.data).equal(undefined);
-        expect(finn.data).equal(undefined);
+        expect(fido.getData()).equal(undefined);
+        expect(spot.getData()).equal(undefined);
+        expect(finn.getData()).equal(undefined);
 
         async.parallel([
           function(cb) { connection.get('dogs', 'fido').create({age: 3}, cb); },
@@ -122,9 +122,9 @@ describe('client subscribe', function() {
             function(cb) { finn[method](cb); }
           ], function(err) {
             if (err) return done(err);
-            expect(fido.data).eql({age: 3});
-            expect(spot.data).eql({age: 5});
-            expect(finn.data).eql({age: 2});
+            expect(fido.getData()).eql({age: 3});
+            expect(spot.getData()).eql({age: 5});
+            expect(finn.getData()).eql({age: 2});
 
             // Test sending a fetch without any new ops being created
             connection2.startBulk();
@@ -149,9 +149,9 @@ describe('client subscribe', function() {
                   function(cb) { finn[method](cb); }
                 ], function(err) {
                   if (err) return done(err);
-                  expect(fido.data).eql({age: 4});
-                  expect(spot.data).eql({age: 6});
-                  expect(finn.data).eql({age: 3});
+                  expect(fido.getData()).eql({age: 4});
+                  expect(spot.getData()).eql({age: 6});
+                  expect(finn.getData()).eql({age: 3});
                   done();
                 });
                 connection2.endBulk();
@@ -192,7 +192,7 @@ describe('client subscribe', function() {
         doc2[method](function(err) {
           if (err) return done(err);
           expect(doc2.version).eql(1);
-          expect(doc2.data).eql({age: 3});
+          expect(doc2.getData()).eql({age: 3});
           done();
         });
         doc2.connection.close();
@@ -213,7 +213,7 @@ describe('client subscribe', function() {
         doc2[method](function(err) {
           expect(err.message).equal('Reject doc read');
           expect(doc2.version).eql(null);
-          expect(doc2.data).eql(undefined);
+          expect(doc2.getData()).eql(undefined);
           done();
         });
       });
@@ -231,7 +231,7 @@ describe('client subscribe', function() {
         doc2.on('error', function(err) {
           expect(err.message).equal('Reject doc read');
           expect(doc2.version).eql(null);
-          expect(doc2.data).eql(undefined);
+          expect(doc2.getData()).eql(undefined);
           done();
         });
       });
@@ -268,7 +268,7 @@ describe('client subscribe', function() {
         if (err) return done(err);
         expect(calls).equal(1);
         expect(doc.version).equal(1);
-        expect(doc.data).eql({age: 3});
+        expect(doc.getData()).eql({age: 3});
         done();
       });
       setTimeout(function() {
@@ -291,7 +291,7 @@ describe('client subscribe', function() {
           if (err) return done(err);
           expect(calls).equal(1);
           expect(doc.version).equal(1);
-          expect(doc.data).eql({age: 5});
+          expect(doc.getData()).eql({age: 5});
           done();
         });
         setTimeout(function() {
@@ -329,7 +329,7 @@ describe('client subscribe', function() {
       doc2.on('create', function(context) {
         expect(context).equal(false);
         expect(doc2.version).eql(1);
-        expect(doc2.data).eql({age: 3});
+        expect(doc2.getData()).eql({age: 3});
         done();
       });
       doc.create({age: 3});
@@ -345,7 +345,7 @@ describe('client subscribe', function() {
         if (err) return done(err);
         doc2.on('op', function(op, context) {
           expect(doc2.version).eql(2);
-          expect(doc2.data).eql({age: 4});
+          expect(doc2.getData()).eql({age: 4});
           done();
         });
         doc.submitOp({p: ['age'], na: 1});
@@ -461,7 +461,7 @@ describe('client subscribe', function() {
         if (err) return done(err);
         doc2.on('op', function(op, context) {
           expect(doc2.version).eql(2);
-          expect(doc2.data).eql({age: 4});
+          expect(doc2.getData()).eql({age: 4});
           done();
         });
 
@@ -508,7 +508,7 @@ describe('client subscribe', function() {
           expect(op).eql(item);
           if (expected.length) return;
           expect(doc2.version).equal(3);
-          expect(doc2.data).eql({age: 9});
+          expect(doc2.getData()).eql({age: 9});
           done();
         });
         backend.suppressPublish = true;
@@ -538,7 +538,7 @@ describe('client subscribe', function() {
         doc2.on('op', function(op, context) {
           if (--wait) return;
           expect(doc2.version).eql(5);
-          expect(doc2.data).eql({age: 122});
+          expect(doc2.getData()).eql({age: 122});
           done();
         });
         backend.suppressPublish = true;

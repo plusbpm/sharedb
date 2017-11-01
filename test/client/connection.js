@@ -64,6 +64,24 @@ describe('client connection', function() {
     connection.socket.onerror({message: 'Test'});
   });
 
+  describe('data interface', function() {
+    it('instantiate doc with data = undefined', function(done) {
+      var connection = this.backend.connect();
+      var doc = connection.get('cats', 'mousee');
+      expect(doc.getData()).equal(undefined);
+      done();
+    });
+    it('create doc verify', function(done) {
+      var connection = this.backend.connect();
+      var doc = connection.get('cats', 'sharki');
+      var data = { 'bodyLength': 800, 'lengthUnits': 'mm' };
+      doc.create(data, function() {
+        expect(data).eql(doc.getData());
+        done();
+      });
+    });
+  });
+
   describe('backend.agentsCount', function() {
     it('updates after connect and connection.close()', function(done) {
       var backend = this.backend;

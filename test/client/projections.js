@@ -17,7 +17,7 @@ describe('client projections', function() {
       var fido = connection2.get('dogs_summary', 'fido');
       fido[method](function(err) {
         if (err) return done(err);
-        expect(fido.data).eql({age: 3, owner: {name: 'jim'}});
+        expect(fido.getData()).eql({age: 3, owner: {name: 'jim'}});
         expect(fido.version).eql(1);
         done();
       });
@@ -30,7 +30,7 @@ describe('client projections', function() {
       connection2[method]('dogs_summary', {}, null, function(err, results) {
         if (err) return done(err);
         expect(results.length).eql(1);
-        expect(results[0].data).eql({age: 3, owner: {name: 'jim'}});
+        expect(results[0].getData()).eql({age: 3, owner: {name: 'jim'}});
         expect(results[0].version).eql(1);
         done();
       });
@@ -98,7 +98,7 @@ describe('client projections', function() {
           if (err) return done(err);
           fido.fetch(function(err) {
             if (err) return done(err);
-            expect(fido.data).eql(expected);
+            expect(fido.getData()).eql(expected);
             expect(fido.version).eql(2);
             done();
           });
@@ -116,7 +116,7 @@ describe('client projections', function() {
       fido.subscribe(function(err) {
         if (err) return done(err);
         fido.on('op', function() {
-          expect(fido.data).eql(expected);
+          expect(fido.getData()).eql(expected);
           expect(fido.version).eql(2);
           done();
         });
@@ -137,7 +137,7 @@ describe('client projections', function() {
           if (err) return done(err);
           connection2.createFetchQuery('dogs_summary', {}, null, function(err) {
             if (err) return done(err);
-            expect(fido.data).eql(expected);
+            expect(fido.getData()).eql(expected);
             expect(fido.version).eql(2);
             done();
           });
@@ -155,7 +155,7 @@ describe('client projections', function() {
       connection2.createSubscribeQuery('dogs_summary', {}, null, function(err) {
         if (err) return done(err);
         fido.on('op', function() {
-          expect(fido.data).eql(expected);
+          expect(fido.getData()).eql(expected);
           expect(fido.version).eql(2);
           done();
         });
@@ -223,7 +223,7 @@ describe('client projections', function() {
           if (err) return done(err);
           doc.fetch(function(err) {
             if (err) return done(err);
-            expect(doc.data).eql(expected);
+            expect(doc.getData()).eql(expected);
             expect(doc.version).equal(2);
             done();
           });
@@ -239,7 +239,7 @@ describe('client projections', function() {
           expect(err).ok();
           doc.fetch(function(err) {
             if (err) return done(err);
-            expect(doc.data).eql({age: 3, color: 'gold', owner: {name: 'jim'}, litter: {count: 4}});
+            expect(doc.getData()).eql({age: 3, color: 'gold', owner: {name: 'jim'}, litter: {count: 4}});
             expect(doc.version).equal(1);
             done();
           });
@@ -286,7 +286,7 @@ describe('client projections', function() {
           if (err) return done(err);
           doc.fetch(function(err) {
             if (err) return done(err);
-            expect(doc.data).eql(undefined);
+            expect(doc.getData()).eql(undefined);
             expect(doc.version).equal(2);
             done();
           });
@@ -302,7 +302,7 @@ describe('client projections', function() {
         if (err) return done(err);
         doc.fetch(function(err) {
           if (err) return done(err);
-          expect(doc.data).eql({age: 5});
+          expect(doc.getData()).eql({age: 5});
           expect(doc.version).equal(1);
           done();
         });
@@ -317,7 +317,7 @@ describe('client projections', function() {
         expect(err).ok();
         doc.fetch(function(err) {
           if (err) return done(err);
-          expect(doc.data).eql(undefined);
+          expect(doc.getData()).eql(undefined);
           expect(doc.version).equal(0);
           done();
         });
